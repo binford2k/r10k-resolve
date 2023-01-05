@@ -1,0 +1,7 @@
+.DS_Store
+*.gem
+Gemfile.lock
+.rvmrc
+.rake_t_cache
+vendor
+

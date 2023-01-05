@@ -1,0 +1,55 @@
+#! /usr/bin/env ruby
+
+require 'r10k-resolve'
+require 'optparse'
+require 'logger'
+
+logger       = Logger.new(STDOUT)
+logger.level = Logger::WARN
+logger.formatter = proc { |sev, dt, prog, msg|
+  "#{sev} #{msg}\n"
+}
+
+options = {
+  :source => 'Puppetfile.src',
+  :force  => false,
+  :dryrun => false,
+  :logger => logger,
+}
+OptionParser.new do |opts|
+  Version     = R10kResolve::VERSION
+  opts.banner = "Usage: r10k-resolve [options]"
+
+  opts.on("-s", "--source [FILE]", "Pass the name of a source file (Puppetfile.src)") do |v|
+    options[:source] = v
+  end
+  opts.on("-o", "--output [FILE]", "Pass the name of an output file (Puppetfile)") do |v|
+    options[:output] = v
+  end
+  opts.on("-f", "--[no-]force", "Overwrite an existing output file") do |v|
+    options[:force] = v
+  end
+  opts.on("-d", "--[no-]dry-run", "Print output to the terminal instead of a file") do |v|
+    options[:dryrun] = v
+  end
+  opts.on("-v", "--[no-]verbose", "Display debugging output") do |v|
+    logger.level = Logger::DEBUG
+  end
+end.parse!
+
+if options[:dryrun]
+  logger.info("Dry run selected: displaying output instead of saving to file.")
+  logger.info("--------------------------------------------------------------")
+  options[:output] = $stdout.dup
+else
+  options[:output] ||= File.basename(options[:source], ".*")
+
+  unless options[:force]
+    if File.exist?(options[:output])
+      logger.error("Pass --force to overwrite existing file: #{options[:output]}")
+      exit(1)
+    end
+  end
+end
+
+R10kResolve.new(options).resolve
