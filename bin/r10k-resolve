@@ -26,6 +26,9 @@ OptionParser.new do |opts|
   opts.on("-o", "--output [FILE]", "Pass the name of an output file (Puppetfile)") do |v|
     options[:output] = v
   end
+  opts.on("-p", "--puppet-version [VERSION]", "Pass the version number of Puppet to constrain to. Default is latest.") do |v|
+    options[:puppetversion] = v
+  end
   opts.on("-f", "--[no-]force", "Overwrite an existing output file") do |v|
     options[:force] = v
   end
@@ -52,4 +55,13 @@ else
   end
 end
 
-R10kResolve.new(options).resolve
+begin
+  R10kResolve.new(options).resolve
+rescue StandardError => e
+  case logger.level
+  when Logger::DEBUG
+    puts e.full_message
+  else
+    puts "#{e.class}: #{e.message}"
+  end
+end
