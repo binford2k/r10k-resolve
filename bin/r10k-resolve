@@ -60,8 +60,9 @@ begin
 rescue StandardError => e
   case logger.level
   when Logger::DEBUG
-    puts e.full_message
+    raise
   else
     puts "#{e.class}: #{e.message}"
+    exit 1
   end
 end
