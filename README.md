@@ -38,6 +38,7 @@ gem install r10k-resolve
 1. Run `r10k-resolve` from the same directory to generate the `Puppetfile` with
    all dependencies resolved.
      - You can also pass `--source` and `--output` arguments if you'd rather.
+     - If you're not running the current version of Puppet, specify it with `--puppet-version`.
 1. Review the generated `Puppetfile` for quality and security purposes. This is
    optional, but highly recommended.
 1. Commit the `Puppetfile` and deploy your control repository, as fitting your

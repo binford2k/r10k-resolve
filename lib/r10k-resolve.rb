@@ -3,10 +3,10 @@ require "puppetfile-resolver"
 require "puppetfile-resolver/puppetfile/parser/r10k_eval"
 
 class R10kResolve
-  attr_accessor :source, :output, :force, :dryrun, :logger
+  attr_accessor :source, :output, :puppetversion, :force, :dryrun, :logger
 
   def initialize(options = {})
-    [:source, :output, :force, :dryrun, :logger].each do |key|
+    [:source, :output, :puppetversion, :force, :dryrun, :logger].each do |key|
       send("#{key}=", options[key])
     end
 
@@ -24,7 +24,7 @@ class R10kResolve
       return false
     end
 
-    resolver = PuppetfileResolver::Resolver.new(puppetfile, nil)
+    resolver = PuppetfileResolver::Resolver.new(puppetfile, puppetversion)
     result = resolver.resolve(strict_mode: true)
 
     # Output resolution validation information
@@ -46,7 +46,9 @@ class R10kResolve
       @output.write("mod '#{dep.payload.owner}-#{dep.payload.name}', '#{dep.payload.version}'\n")
     end
 
-    @output.write("\n# Generated with r10k-resolve version #{R10kResolve::VERSION}\n\n")
+    @output.write("\n# Generated with r10k-resolve v#{R10kResolve::VERSION}")
+    @output.write(" for Puppet v#{puppetversion}") if puppetversion
+    @output.write("\n\n")
 
     logger.warn(
       "Please inspect the output to ensure you know what you are deploying in your infrastructure."
