@@ -16,7 +16,7 @@ Gem::Specification.new do |s|
   s.files             = %w( README.md LICENSE )
   s.files            += Dir.glob("lib/**/*")
   s.files            += Dir.glob("bin/**/*")
-  s.add_dependency      'puppetfile-resolver', '~> 0.5.0'
+  s.add_dependency      'puppetfile-resolver', '>= 0.5.0', '< 1.0'
 
   s.description       = <<-desc
     This will take a Puppetfile.src in which you've described only the Puppet modules
